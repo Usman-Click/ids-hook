@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: "IDS Security <no-reply@ids.com>", //  verified sender
-        to: [usermail],
+        to: ['uadamuharuna@gmail.com'],
         subject: "Your Verification Code",
         html: `<p>Hi, your verification code is <strong>${code}</strong>.</p>`,
       }),
