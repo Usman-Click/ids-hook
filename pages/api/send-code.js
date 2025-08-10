@@ -16,15 +16,13 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     const data = req.body;
     if (data != null) {
-      console.log("Webhook received, Data:", data);
-
+      const uid =data.user.uid;
       const snapshot = await admin
         .firestore()
         .collection("users")
-        .doc(`${data.user.uid}`)
+        .doc(uid)
         .get();
 
-      if (snapshot.exists()) {
         const userEmail = snapshot.data.email;
 
         // Generate 6-digit code
@@ -32,7 +30,7 @@ export default async function handler(req, res) {
 
         console.log("Webhook received, Data:", userEmail + code);
       }
-    }
+    
 
     return res.status(100).json({ message: "Event ignored" });
   } else {
