@@ -7,7 +7,7 @@ if (!admin.apps.length) {
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
     }),
   });
 }
@@ -15,17 +15,23 @@ if (!admin.apps.length) {
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const data = req.body;
-    console.log("Webhook received, Data:", data);
+    if (data != null) {
+      console.log("Webhook received, Data:", data);
 
-    const snapshot = await admin
-      .firestore()
-      .collection("users")
-      .doc(`${data.user.uid}`)
-      .get();
+      const snapshot = await admin
+        .firestore()
+        .collection("users")
+        .doc(`${data.user.uid}`)
+        .get();
 
-    console.log("Webhook received, Data:", snapshot);
+      if (snapshot.exists()) {
+        const userEmail = snapshot.data.email;
 
-    if (body != null) {
+        // Generate 6-digit code
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+        console.log("Webhook received, Data:", userEmail + code);
+      }
     }
 
     return res.status(100).json({ message: "Event ignored" });
