@@ -1,6 +1,5 @@
 // 1. Import Firebase Admin
 import admin from "firebase-admin";
-import { Resend } from "resend";
 
 // 2. Initialize Firebase Admin SDK only once
 if (!admin.apps.length) {
@@ -13,38 +12,57 @@ if (!admin.apps.length) {
   });
 }
 
+const RESEND_API_KEY = process.env.RESEND_API_KEY; // 
+
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    const data = req.body;
-    if (data != null) {
-      const uid = data.user.uid;
-      const snapshot = await admin
-        .firestore()
-        .collection("users")
-        .doc(uid)
-        .get();
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).json({ message: `Method ${req.method} not allowed` });
+  }
 
-      // Generate 6-digit code
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      const resend = new Resend("re_Roe1xZd8_6DVZMewNGYmSyZzF5Czt5Sb9");
-      const usermail = snapshot.email;
+  try {
+    const { uid } = req.body;
+    if (!uid) return res.status(400).json({ message: "Missing UID" });
 
-      resend.emails.send({
-        from: "Intrusion Detection System",
-        to: "uadamuharuna@gmail.com",
-        subject: "Verification Code",
-        html:
-          "<p>Hi, Your Verification code is <strong>" + code + "</strong>!</p>",
-      });
+    // Fetch user data from Firestore
+    const snapshot = await admin.firestore().collection("users").doc(uid).get();
+    if (!snapshot.exists) return res.status(404).json({ message: "User not found" });
 
-      console.log("Webhook received, Data:", usermail + code);
+    const usermail = snapshot.data().email;
+
+    // Generate 6-digit verification code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Send email using Resend
+    const emailRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "IDS Security <no-reply@yourdomain.com>", //  verified sender
+        to: [usermail],
+        subject: "Your Verification Code",
+        html: `<p>Hi, your verification code is <strong>${code}</strong>.</p>`,
+      }),
+    });
+
+    if (!emailRes.ok) {
+      const error = await emailRes.text();
+      return res.status(500).json({ message: "Email send failed", error });
     }
 
-    return res.status(200).json({ message: "Code Sent Succesfully" });
+    // Optionally save code in Firestore
+    await admin.firestore().collection("users").doc(uid).update({
+      verificationCode: code,
+      codeExpiresAt: Date.now() + 10 * 60 * 1000, // expires in 10 min
+    });
 
-    // return res.status(100).json({ message: "Event ignored" });
-  } else {
-    res.setHeader("Allow", ["POST"]);
-    res.status(405).json({ message: `Method ${req.method} not allowed` });
+    return res.status(200).json({ message: "Code sent successfully" });
+
+  } catch (error) {
+    console.error("Error sending code:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }
