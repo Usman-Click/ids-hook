@@ -38,10 +38,10 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
+        Authorization: `Bearer ${RESEND_KEY}`,
       },
       body: JSON.stringify({
-        from: "IDS Security <no-reply@yourdomain.com>", //  verified sender
+        from: "IDS Security <no-reply@ids.com>", //  verified sender
         to: [usermail],
         subject: "Your Verification Code",
         html: `<p>Hi, your verification code is <strong>${code}</strong>.</p>`,
