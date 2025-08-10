@@ -12,7 +12,7 @@ if (!admin.apps.length) {
   });
 }
 
-const RESEND_API_KEY = process.env.RESENDS_KEY; 
+const RESEND_KEY = process.env.RESENDS_KEY; 
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,8 +21,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { uid } = req.body;
-    if (!uid) return res.status(400).json({ message: "Missing UID" });
+    const data = req.body;
+    const uid = data.user.uid;
 
     // Fetch user data from Firestore
     const snapshot = await admin.firestore().collection("users").doc(uid).get();
