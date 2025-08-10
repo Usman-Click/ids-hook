@@ -12,7 +12,7 @@ if (!admin.apps.length) {
   });
 }
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY; // 
+const RESEND_API_KEY = process.env.RESENDS_KEY; 
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
