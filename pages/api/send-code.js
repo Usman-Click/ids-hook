@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${RESEND_KEY}`,
       },
       body: JSON.stringify({
-        from: "IDS Security <no-reply@ids.com>", //  verified sender
+        from: "onboarding@resend.dev", //  verified sender
         to: ['uadamuharuna@gmail.com'],
         subject: "Your Verification Code",
         html: `<p>Hi, your verification code is <strong>${code}</strong>.</p>`,
