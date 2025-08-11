@@ -43,7 +43,8 @@ export default async function handler(req, res) {
 
     // 1. Create transporter with Gmail SMTP
     let transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "smtp.gmail.com",
+      port: 465,
       auth: {
         user: process.env.GMAIL_USER, // your@gmail.com
         pass: process.env.GMAIL_APP_PASSWORD, // app pass
