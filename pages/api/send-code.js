@@ -25,18 +25,12 @@ export default async function handler(req, res) {
     // 4. Get user ID from the req body
     const data = req.body;
     const uid = data.user.uid;
+    const usermail = data.user.email;
 
-    // 5. Fetch user data from Firestore
-    const snapshot = await admin.firestore().collection("users").doc(uid).get();
-    if (!snapshot.exists)
-      return res.status(404).json({ message: "User not found" });
-    // 6. Get the user's mail
-    const usermail = snapshot.data().email;
-
-    // 7. Generate 6-digit verification code
+    // 5. Generate 6-digit verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 8. Send the email using Resend
+    // 6. Send the email using Resend
     const emailReq = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
