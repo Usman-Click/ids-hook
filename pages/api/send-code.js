@@ -52,7 +52,7 @@ export default async function handler(req, res) {
 
     // 2. Send mail
     await transporter.sendMail({
-      from: `"Intrusion Detection System" <${"ids@appnex.dev>"}>`,
+      from: "Intrusion Detection System <ids@appnex.dev>",
       to: usermail,
       subject: "Your Verification Code",
       html: `<p>Hi, your verification code is <strong>${code}</strong></p>`,
