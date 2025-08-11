@@ -1,5 +1,6 @@
 // 1. Import Firebase Admin
 import admin from "firebase-admin";
+import nodemailer from "nodemailer";
 
 // 2. Initialize Firebase Admin SDK only once
 if (!admin.apps.length) {
