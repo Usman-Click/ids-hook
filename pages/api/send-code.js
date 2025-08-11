@@ -13,6 +13,10 @@ if (!admin.apps.length) {
 }
 
 export default async function handler(req, res) {
+  // Add CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
+
+  
   // 3. check if it's a POST req
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
