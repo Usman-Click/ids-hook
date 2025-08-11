@@ -16,7 +16,6 @@ export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
 
-  
   // 3. check if it's a POST req
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -25,6 +24,12 @@ export default async function handler(req, res) {
       .json({ message: `Method ${req.method} not allowed` });
   }
 
+  //  Handle the preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  
   try {
     // 4. Get user ID from the req body
     const data = req.body;
