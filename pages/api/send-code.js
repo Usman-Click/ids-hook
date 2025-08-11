@@ -58,11 +58,6 @@ export default async function handler(req, res) {
       html: `<p>Hi, your verification code is <strong>${code}</strong></p>`,
     });
 
-    if (!emailReq.ok) {
-      const error = await emailReq.text();
-      return res.status(500).json({ message: "Email send failed", error });
-    }
-
     // save code in Firestore
     await admin.firestore().collection("users").doc(uid).update({
       verificationCode: code,
