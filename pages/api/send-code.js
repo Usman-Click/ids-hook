@@ -40,19 +40,21 @@ export default async function handler(req, res) {
     // 5. Generate 6-digit verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 6. Send the email using Resend
-    const emailReq = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.RESENDS_KEY}`,
+    // 1. Create transporter with Gmail SMTP
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER, // your@gmail.com
+        pass: process.env.GMAIL_APP_PASSWORD, // app password
       },
-      body: JSON.stringify({
-        from: "onboarding@resend.dev", //  we're using test mail here, else we need to provide and virify our domain
-        to: [usermail],
-        subject: "Your Verification Code",
-        html: `<p>Hi, your verification code is <strong>${code}</strong>.</p>`,
-      }),
+    });
+
+    // 2. Send mail
+    await transporter.sendMail({
+      from: `"Intrusion Detection System" <${"ids@appnex.dev>"}>`,
+      to: email,
+      subject: "Your Verification Code",
+      html: `<p>Hi, your verification code is <strong>${code}</strong></p>`,
     });
 
     if (!emailReq.ok) {
