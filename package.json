@@ -15,7 +15,7 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.2.0",
     "http-proxy-middleware": "^3.0.3",
-    "next": "^15.4.6",
+    "next": "15.4.10",
     "nodemailer": "^7.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
